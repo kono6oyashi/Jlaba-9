@@ -1,0 +1,71 @@
+#include <stdio.h>
+
+int main() {
+    FILE* f1, * f2;
+    int ch, currentLine = 1, vowelCount = 0, K;
+
+    f1 = fopen("F1.txt", "w");
+    if (f1 == NULL) {
+        printf("Ошибка при создании файла F1.txt\n");
+        return 1;
+    }
+    fprintf(f1, "Это строка 1.\n");
+    fprintf(f1, "Это строка 2.\n");
+    fprintf(f1, "Это строка 3.\n");
+    fprintf(f1, "Это строка 4.\n");
+    fprintf(f1, "Это строка 5.\n");
+    fprintf(f1, "Это строка 6.\n");
+    fprintf(f1, "Это строка 7.\n");
+    fprintf(f1, "Это строка 8.\n");
+    fprintf(f1, "Это строка 9.\n");
+    fprintf(f1, "Это строка 10.\n");
+    fclose(f1);
+
+    printf("Введите номер строки K, с которой начнётся копирование: ");
+    scanf("%d", &K);
+    if (K < 1) {
+        printf("Номер строки K должен быть не меньше 1.\n");
+        return 1;
+    }
+
+    f1 = fopen("F1.txt", "r");
+    if (f1 == NULL) {
+        printf("Ошибка при открытии файла F1.txt\n");
+        return 1;
+    }
+    f2 = fopen("F2.txt", "w");
+    if (f2 == NULL) {
+        printf("Ошибка при создании файла F2.txt\n");
+        fclose(f1);
+        return 1;
+    }
+    while ((ch = fgetc(f1)) != EOF) {
+        if (currentLine >= K && currentLine <= K + 5)
+            fputc(ch, f2);
+        if (ch == '\n')
+            currentLine++;
+    }
+    fclose(f1);
+    fclose(f2);
+
+    f2 = fopen("F2.txt", "r");
+    if (f2 == NULL) {
+        printf("Ошибка при открытии файла F2.txt\n");
+        return 1;
+    }
+    while ((ch = fgetc(f2)) != EOF) {
+        if (ch == 'a' || ch == 'A' ||
+            ch == 'e' || ch == 'E' ||
+            ch == 'i' || ch == 'I' ||
+            ch == 'o' || ch == 'O' ||
+            ch == 'u' || ch == 'U')
+        {
+            vowelCount++;
+        }
+    }
+    fclose(f2);
+
+    printf("Количество гласных букв в файле F2: %d\n", vowelCount);
+
+    return 0;
+}
