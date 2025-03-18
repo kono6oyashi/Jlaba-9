@@ -1,71 +1,51 @@
-#include <stdio.h>
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
 
-int main() {
-    FILE* f1, * f2;
-    int ch, currentLine = 1, vowelCount = 0, K;
+using namespace std;
 
-    f1 = fopen("F1.txt", "w");
-    if (f1 == NULL) {
-        printf("Ошибка при создании файла F1.txt\n");
-        return 1;
-    }
-    fprintf(f1, "Это строка 1.\n");
-    fprintf(f1, "Это строка 2.\n");
-    fprintf(f1, "Это строка 3.\n");
-    fprintf(f1, "Это строка 4.\n");
-    fprintf(f1, "Это строка 5.\n");
-    fprintf(f1, "Это строка 6.\n");
-    fprintf(f1, "Это строка 7.\n");
-    fprintf(f1, "Это строка 8.\n");
-    fprintf(f1, "Это строка 9.\n");
-    fprintf(f1, "Это строка 10.\n");
-    fclose(f1);
+int countVowels(const char* line) {
+    int count = 0;
+    const char vowels[] = "AEIOUaeiouАЕЁИОУЫЭЮЯаеёиоуыэюя";
 
-    printf("Введите номер строки K, с которой начнётся копирование: ");
-    scanf("%d", &K);
-    if (K < 1) {
-        printf("Номер строки K должен быть не меньше 1.\n");
-        return 1;
-    }
-
-    f1 = fopen("F1.txt", "r");
-    if (f1 == NULL) {
-        printf("Ошибка при открытии файла F1.txt\n");
-        return 1;
-    }
-    f2 = fopen("F2.txt", "w");
-    if (f2 == NULL) {
-        printf("Ошибка при создании файла F2.txt\n");
-        fclose(f1);
-        return 1;
-    }
-    while ((ch = fgetc(f1)) != EOF) {
-        if (currentLine >= K && currentLine <= K + 5)
-            fputc(ch, f2);
-        if (ch == '\n')
-            currentLine++;
-    }
-    fclose(f1);
-    fclose(f2);
-
-    f2 = fopen("F2.txt", "r");
-    if (f2 == NULL) {
-        printf("Ошибка при открытии файла F2.txt\n");
-        return 1;
-    }
-    while ((ch = fgetc(f2)) != EOF) {
-        if (ch == 'a' || ch == 'A' ||
-            ch == 'e' || ch == 'E' ||
-            ch == 'i' || ch == 'I' ||
-            ch == 'o' || ch == 'O' ||
-            ch == 'u' || ch == 'U')
-        {
-            vowelCount++;
+    for (int i = 0; line[i] != '\0'; i++) {
+        for (int j = 0; vowels[j] != '\0'; j++) {
+            if (line[i] == vowels[j]) {
+                count++;
+                break;
+            }
         }
     }
-    fclose(f2);
+    return count;
+}
 
-    printf("Количество гласных букв в файле F2: %d\n", vowelCount);
+int main() {
+    int K;
+    cout << "Введите номер строки K: ";
+    cin >> K;
+    setlocale(LC_ALL, "Russian");
+    FILE* fin = fopen("C:\\Users\\Степан\\Desktop\\F1.txt", "r");
+    FILE* fout = fopen("C:\\Users\\Степан\\Desktop\\F2.txt", "w");
+    char buffer[256];
+    int lineNum = 0;
+    int copiedLines = 0;
+    while (fgets(buffer, sizeof(buffer), fin)) {
+        lineNum++;
+        if (lineNum >= K && copiedLines < 5) {
+            fputs(buffer, fout);
+            copiedLines++;
+        }
+    }
+    fclose(fin);
+    fclose(fout);
+    FILE* fin2 = fopen("C:\\Users\\Степан\\Desktop\\F2.txt", "r");
+    int totalVowels = 0;
+    while (fgets(buffer, sizeof(buffer), fin2)) {
+        totalVowels += countVowels(buffer);
+    }
+    fclose(fin2);
 
+    cout << "Количество гласных букв в F2.txt: " << totalVowels << endl;
     return 0;
 }
